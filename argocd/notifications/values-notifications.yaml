@@ -23,7 +23,9 @@ notifications:
             {"app": "{{.app.metadata.name}}", "event": "health degraded"}
   triggers:
     trigger.on-sync-succeeded: |           # (3) a trigger: when to send
-      - when: app.status.operationState != nil and app.status.operationState.phase in ['Succeeded']
+      - when: >-
+          app.status.operationState != nil and
+          app.status.operationState.phase in ['Succeeded']
         oncePer: app.status.operationState.syncResult.revision
         send: [app-sync-succeeded]
     trigger.on-health-degraded: |

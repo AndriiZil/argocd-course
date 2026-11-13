@@ -3,7 +3,7 @@ kind: Application
 metadata:
   name: notify-demo
   namespace: argocd
-  annotations:                                           # (4) a subscription: who gets what
+  annotations:                   # (4) a subscription: who gets what
     notifications.argoproj.io/subscribe.on-sync-succeeded.receiver: ""
     notifications.argoproj.io/subscribe.on-health-degraded.receiver: ""
 spec:
