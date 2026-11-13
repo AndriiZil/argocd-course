@@ -6,6 +6,8 @@ metadata:
 spec:
   goTemplate: true               # (1) write {{ .name }}, with a leading dot
   goTemplateOptions: ["missingkey=error"]   # (2) a misspelled name is an error
+  syncPolicy:
+    preserveResourcesOnDeletion: true
   generators:                    # (3) where the parameter sets come from
     - git:
         repoURL: https://github.com/AndriiZil/argocd-course.git
