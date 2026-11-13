@@ -9,4 +9,4 @@ replicas:
   name: podinfo
 images:
 - name: ghcr.io/stefanprodan/podinfo
-  newTag: 6.16.0
+  newTag: 6.17.0
