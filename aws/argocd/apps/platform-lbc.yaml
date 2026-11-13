@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata: {name: platform-lbc, namespace: argocd}
+spec:
+  goTemplate: true
+  generators:
+    - clusters:                        # (1) one Application per registered cluster ...
+        selector: {matchLabels: {platform: "true"}}   #     ... that carries this label
+  template:
+    metadata:
+      name: '{{.name}}-lbc'            # (2) for example tinyshop-dev-lbc
+    spec:
+      project: default
+      source:
+        repoURL: https://aws.github.io/eks-charts
+        chart: aws-load-balancer-controller
+        targetRevision: 3.6.3
+        helm:
+          releaseName: aws-load-balancer-controller
+          parameters:                  # (3) facts Terraform put on the Secret
+            - {name: clusterName, value: '{{.name}}'}
+            - {name: region, value: '{{.metadata.annotations.region}}'}
+            - {name: vpcId, value: '{{.metadata.annotations.vpcId}}'}
+      destination:
+        server: '{{.server}}'          # (4) the cluster this Application deploys to
+        namespace: kube-system
+      syncPolicy:
+        automated: {prune: true, selfHeal: true}

@@ -1,0 +1,27 @@
+# NOT TESTED in this book's lab. Argo CD installs itself from the same chart and values
+# files that Terraform used. Apply it by hand to try the pattern; the root app ignores it.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd                       # no finalizer: deleting it must not delete Argo CD
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://argoproj.github.io/argo-helm
+      chart: argo-cd
+      targetRevision: 10.18.0        # (1) a pull request changes this line
+      helm:
+        releaseName: argocd
+        valueFiles:                  # (2) the same files as in Terraform
+          - $values/aws/argocd/values-hub.yaml
+          - $values/aws/argocd/values-alb.yaml
+          - $values/aws/argocd/values-day2.yaml
+    - repoURL: https://github.com/AndriiZil/argocd-course.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated: {prune: false, selfHeal: true}   # (3) never prune Argo CD's own parts

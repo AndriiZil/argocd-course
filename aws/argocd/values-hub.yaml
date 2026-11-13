@@ -1,0 +1,19 @@
+global:
+  topologySpreadConstraints:        # (1) spread every component over availability zones
+    - maxSkew: 1
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
+controller:
+  replicas: 2                       # (2) two shards: each cluster belongs to one shard
+  pdb: {enabled: true, maxUnavailable: 1}
+server:
+  replicas: 3                       # (3) stateless: the docs advise 3 or more
+  pdb: {enabled: true, maxUnavailable: 1}
+repoServer:
+  replicas: 2                       # (4) renders manifests: a second copy keeps syncing
+  pdb: {enabled: true, maxUnavailable: 1}
+redis:
+  enabled: false                    # (5) the single Redis goes away ...
+redis-ha:
+  enabled: true                     #     ... Redis HA (3 servers, 3 proxies) replaces it
+  topologySpreadConstraints: {enabled: true}

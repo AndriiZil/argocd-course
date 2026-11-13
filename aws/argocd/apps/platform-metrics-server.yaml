@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: platform-metrics-server
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            platform: "true"
+  template:
+    metadata:
+      name: '{{.name}}-metrics-server'
+    spec:
+      project: default
+      source:
+        repoURL: https://kubernetes-sigs.github.io/metrics-server/
+        chart: metrics-server
+        targetRevision: 3.14.0
+        helm:
+          releaseName: metrics-server
+      destination:
+        server: '{{.server}}'
+        namespace: kube-system
+      syncPolicy:
+        automated: {prune: true, selfHeal: true}

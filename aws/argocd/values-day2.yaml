@@ -1,0 +1,22 @@
+# Day-2 settings (Lesson 13). No secret is in this file: Secrets Manager holds the values.
+configs:
+  cm:
+    dex.config: |                       # (1) log in with GitHub through Dex
+      connectors:
+        - type: github
+          id: github
+          name: GitHub
+          config:
+            clientID: aabbccddeeff00112233
+            clientSecret: $argocd-github:clientSecret
+            orgs:
+              - name: your-github-org
+  rbac:
+    policy.csv: |                       # (2) a GitHub team becomes admin
+      g, your-github-org:platform-team, role:admin
+notifications:
+  secret:
+    create: false                       # (3) External Secrets creates the Secret
+  notifiers:
+    service.slack: |                    # (4) the Slack notifier
+      token: $slack-token
