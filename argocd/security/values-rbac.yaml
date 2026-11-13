@@ -9,8 +9,9 @@ configs:
       # (1) p: who, what, which action, on which object, allow or deny
       p, role:tinyshop-dev, applications, get, tinyshop/*, allow
       p, role:tinyshop-dev, applications, sync, tinyshop/*, allow
-      # (2) logs are a separate resource, and since 3.0 always checked
+      # (2) logs and projects are separate resources, each needs its own line
       p, role:tinyshop-dev, logs, get, tinyshop/*, allow
+      p, role:tinyshop-dev, projects, get, tinyshop, allow
       # (3) update changes the Application only, not the resources it manages
       p, role:tinyshop-dev, applications, update, tinyshop/*, allow
       # (4) update/<group>/<kind>/<ns>/<name> reaches resources: Deployments only
