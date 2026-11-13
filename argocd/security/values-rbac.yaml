@@ -1,0 +1,25 @@
+# Local users and roles for the TinyShop team. Layer it over setup/values-local.yaml.
+configs:
+  cm:
+    accounts.alice: login          # alice logs in with a password
+    accounts.ci: apiKey            # ci has no password: it only gets API tokens
+  rbac:
+    policy.default: ""             # a user with no role can do nothing
+    policy.csv: |
+      # (1) p: who, what, which action, on which object, allow or deny
+      p, role:tinyshop-dev, applications, get, tinyshop/*, allow
+      p, role:tinyshop-dev, applications, sync, tinyshop/*, allow
+      # (2) logs are a separate resource, and since 3.0 always checked
+      p, role:tinyshop-dev, logs, get, tinyshop/*, allow
+      # (3) update changes the Application only; update/* would reach its resources
+      p, role:tinyshop-dev, applications, update, tinyshop/*, allow
+      # (4) an action with a sub-resource: delete Pods of the app, nothing else
+      p, role:tinyshop-dev, applications, delete/*/Pod/*/*, tinyshop/*, allow
+      # (5) deny wins over allow
+      p, role:tinyshop-dev, applications, sync, tinyshop/shop-prod, deny
+      # (6) the CI account may read and sync, nothing more
+      p, role:tinyshop-ci, applications, get, tinyshop/*, allow
+      p, role:tinyshop-ci, applications, sync, tinyshop/*, allow
+      # (7) g: put a user, or an SSO group, into a role
+      g, alice, role:tinyshop-dev
+      g, ci, role:tinyshop-ci
