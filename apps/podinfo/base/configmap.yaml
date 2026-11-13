@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: podinfo-notes
-data:
-  owner: platform-team
