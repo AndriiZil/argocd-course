@@ -25,6 +25,8 @@ spec:
           env:
             - name: PODINFO_BACKEND_URL
               value: http://inventory:9898/echo
+            - name: PODINFO_UI_MESSAGE
+              value: "Spring sale"
           readinessProbe:
             httpGet: { path: /readyz, port: http }
           resources:
