@@ -26,7 +26,7 @@ spec:
             - name: PODINFO_BACKEND_URL
               value: http://inventory:9898/echo
             - name: PODINFO_UI_MESSAGE
-              value: "Summer sale"
+              value: "Spring sale"
           readinessProbe:
             httpGet: { path: /readyz, port: http }
           resources:
