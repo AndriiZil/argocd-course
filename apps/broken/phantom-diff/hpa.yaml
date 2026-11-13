@@ -1,0 +1,11 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: phantom-diff
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: phantom-diff }
+  minReplicas: 2                    # ... and the autoscaler insists on 2
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource: { name: cpu, target: { type: Utilization, averageUtilization: 80 } }

@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: zz-quantity
+  name: phantom-diff
 spec:
-  replicas: 0
+  replicas: 1                       # Git says 1 ...
   selector:
     matchLabels:
-      app: zz-quantity
+      app: phantom-diff
   template:
     metadata:
       labels:
-        app: zz-quantity
+        app: phantom-diff
     spec:
       containers:
         - name: podinfo
           image: ghcr.io/stefanprodan/podinfo:6.17.0
           resources:
-            requests: { cpu: 1000m, memory: 0.5Gi }
-            limits: { cpu: 1000m, memory: 0.5Gi }
+            requests: { cpu: 20m, memory: 32Mi }
+            limits: { memory: 64Mi }

@@ -1,0 +1,101 @@
+# Five things that go wrong. Apply them all, then find out why, one at a time.
+# 1. bad-path: the path has a typo.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bad-path
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/broken/bad-pth          # the folder is called bad-path
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: broken
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+---
+# 2. bad-image: the image tag does not exist.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bad-image
+  namespace: argocd
+  annotations:
+    notifications.argoproj.io/subscribe.on-health-degraded.receiver: ""
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/broken/bad-image
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: broken
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+---
+# 3. stuck-delete: deleting the Application never finishes.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stuck-delete
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/broken/stuck-delete
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: broken
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+---
+# 4. phantom-diff: the app is OutOfSync again right after every sync.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: phantom-diff
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/broken/phantom-diff
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: broken
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+---
+# 5. repo-down: a healthy app, used to break the repo server underneath it.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: repo-down
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/broken/repo-down
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: broken
+  syncPolicy:
+    automated:
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
