@@ -1,4 +1,3 @@
-name: release
 on:
   push:
     branches: [main]
@@ -16,8 +15,7 @@ jobs:
           REGISTRY_TOKEN: ${{ github.token }}
         run: |
           IMAGE="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/storefront:${GITHUB_SHA}"
-          echo "$REGISTRY_TOKEN" \
-            | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin <<< "$REGISTRY_TOKEN"
           docker build -t "$IMAGE" storefront
           docker push "$IMAGE"
           echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
