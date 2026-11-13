@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: tinyshop                 # (1) Applications join it with `spec.project: tinyshop`
+  namespace: argocd
+spec:
+  description: The TinyShop team
+  sourceRepos:                   # (2) repositories its Applications may read
+    - https://github.com/AndriiZil/argocd-course.git
+  destinations:                  # (3) clusters and namespaces they may deploy to
+    - server: https://kubernetes.default.svc
+      namespace: tinyshop-dev
+    - server: https://kubernetes.default.svc
+      namespace: tinyshop-prod
+  clusterResourceWhitelist:      # (4) cluster-wide kinds they may create (none if empty)
+    - group: ""
+      kind: Namespace
+  namespaceResourceBlacklist:    # (5) namespaced kinds they may NOT create
+    - group: ""
+      kind: ResourceQuota
+  roles:                         # (6) roles for RBAC and tokens
+    - name: deployer
+      description: May sync the project's Applications
+      policies:
+        - p, proj:tinyshop:deployer, applications, sync, tinyshop/*, allow
+      groups:
+        - tinyshop-developers
+  syncWindows:                   # (7) when syncs are allowed or denied
+    - kind: deny
+      schedule: "0 16 * * 5"     #     cron: Fridays at 16:00
+      duration: 64h
+      applications:
+        - "*-prod"

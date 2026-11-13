@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: podinfo-prod             # (1) unique name in the Argo CD namespace
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io   # (2) delete the app = delete its resources
+spec:
+  project: default               # (3) the AppProject whose rules apply
+  source:                        # (4) WHERE FROM (use `sources:` for several)
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main         #     branch, tag, commit or chart version
+    path: apps/podinfo/overlays/prod   # folder; for a Helm repository use `chart:`
+  destination:                   # (5) WHERE TO
+    server: https://kubernetes.default.svc   # or `name:` of a registered cluster
+    namespace: tinyshop-prod
+  syncPolicy:                    # (6) WHEN AND HOW TO SYNC
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:                       # (7) try again after a failed sync
+      limit: 3
+      backoff: { duration: 5s, factor: 2, maxDuration: 3m }
+  ignoreDifferences:             # (8) fields that another controller owns
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
+  revisionHistoryLimit: 10       # (9) how many syncs `argocd app history` keeps

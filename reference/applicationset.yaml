@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: podinfo
+  namespace: argocd
+spec:
+  goTemplate: true               # (1) use Go templates: {{ .path.basename }}
+  generators:                    # (2) WHERE THE VALUES COME FROM
+    - git:
+        repoURL: https://github.com/AndriiZil/argocd-course.git
+        revision: main
+        directories:
+          - path: apps/podinfo/overlays/*   # one value set per folder
+  template:                      # (3) the Application made for each value set
+    metadata:
+      name: 'podinfo-{{ .path.basename }}'  # (4) the values fill the template
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/AndriiZil/argocd-course.git
+        targetRevision: main
+        path: '{{ .path.path }}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'tinyshop-{{ .path.basename }}'
+      syncPolicy:
+        automated: { prune: true, selfHeal: true }
+        syncOptions:
+          - CreateNamespace=true
+  syncPolicy:                    # (5) how the ApplicationSet treats its Applications
+    preserveResourcesOnDeletion: false
