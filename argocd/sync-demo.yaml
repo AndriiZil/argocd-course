@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sync-demo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/sync-demo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sync-demo
+  syncPolicy:                          # manual sync: you press Sync
+    syncOptions:
+      - CreateNamespace=true           # create the namespace if it is missing
+      - ServerSideApply=true           # the API server merges the fields
+      - PruneLast=true                 # delete removed resources after the rest

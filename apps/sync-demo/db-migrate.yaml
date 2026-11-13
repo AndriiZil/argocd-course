@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrate
+  annotations:
+    argocd.argoproj.io/hook: PreSync                         # before anything else
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded     # remove it when it passes
+spec:
+  backoffLimit: 0                                            # one try, then fail
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: ghcr.io/stefanprodan/podinfo:6.17.0
+          command: ["sh", "-c", "echo migrating the database; sleep 5; echo done"]

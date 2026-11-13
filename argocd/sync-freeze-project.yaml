@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: prod-freeze
+  namespace: argocd
+spec:
+  description: Allows everything, and adds a freeze window (Lesson 9 explains projects)
+  sourceRepos: ["*"]
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: "*"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  syncWindows:
+    - kind: deny                       # a freeze
+      schedule: "0 0 * * *"            # starts every day at 00:00 UTC ...
+      duration: 24h                    # ... and lasts 24 hours: always on, for the demo
+      applications: ["*"]
+      manualSync: false                # not even a person may sync

@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sync-demo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/sync-demo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sync-demo
+  syncPolicy:
+    automated:
+      selfHeal: true                   # Git wins, except where we say otherwise
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - PruneLast=true
+      - RespectIgnoreDifferences=true  # also leave the ignored fields alone on sync
+  # region: ignore
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: storefront
+      jsonPointers:
+        - /spec/replicas               # the autoscaler owns the replica count
+  # endregion

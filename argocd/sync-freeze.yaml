@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sync-freeze
+  namespace: argocd
+spec:
+  project: prod-freeze                 # the project that holds the freeze window
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/sync-demo
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sync-freeze
+  syncPolicy:
+    automated: {}                      # automation is frozen too
+    syncOptions:
+      - CreateNamespace=true
