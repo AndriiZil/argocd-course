@@ -4,7 +4,7 @@ metadata:
   name: db-migrate
   annotations:
     argocd.argoproj.io/hook: PreSync                     # runs before anything else
-    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation   # new run replaces the old Job
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation  # replace the old Job
 spec:
   backoffLimit: 0                                        # one try, then fail
   template:
