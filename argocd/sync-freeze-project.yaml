@@ -12,9 +12,11 @@ spec:
   clusterResourceWhitelist:
     - group: "*"
       kind: "*"
+  # region: window
   syncWindows:
     - kind: deny                       # a freeze
       schedule: "0 0 * * *"            # starts every day at 00:00 UTC ...
       duration: 24h                    # ... and lasts 24 hours: always on, for the demo
       applications: ["*"]
       manualSync: false                # not even a person may sync
+  # endregion
