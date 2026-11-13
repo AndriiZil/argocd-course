@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: notify-demo
+  namespace: argocd
+  annotations:                                           # (4) a subscription: who gets what
+    notifications.argoproj.io/subscribe.on-sync-succeeded.receiver: ""
+    notifications.argoproj.io/subscribe.on-health-degraded.receiver: ""
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/podinfo/overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tinyshop-dev
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

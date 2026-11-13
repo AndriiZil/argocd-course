@@ -1,0 +1,36 @@
+# A tiny web server that prints every request it gets. It stands in for Slack.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: notify-demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: receiver
+  namespace: notify-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: receiver }
+  template:
+    metadata:
+      labels: { app: receiver }
+    spec:
+      containers:
+        - name: receiver
+          image: mendhak/http-https-echo:43      # multi-arch: amd64 and arm64
+          ports:
+            - containerPort: 8080
+          env:
+            - { name: LOG_WITHOUT_NEWLINE, value: "true" }   # one log line per request
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: receiver
+  namespace: notify-demo
+spec:
+  selector: { app: receiver }
+  ports:
+    - port: 8080

@@ -1,0 +1,31 @@
+# Notifications for Argo CD: one service, two templates, two triggers.
+# Layer it over setup/values-local.yaml (the chart ships all four sections empty).
+notifications:
+  notifiers:
+    service.webhook.receiver: |            # (1) a service: where messages go
+      url: http://receiver.notify-demo.svc:8080
+      headers:
+        - name: Content-Type
+          value: application/json
+  templates:
+    template.app-sync-succeeded: |         # (2) a template: what the message says
+      webhook:
+        receiver:
+          method: POST
+          body: |
+            {"app": "{{.app.metadata.name}}", "event": "sync succeeded",
+             "revision": "{{.app.status.operationState.syncResult.revision}}"}
+    template.app-health-degraded: |
+      webhook:
+        receiver:
+          method: POST
+          body: |
+            {"app": "{{.app.metadata.name}}", "event": "health degraded"}
+  triggers:
+    trigger.on-sync-succeeded: |           # (3) a trigger: when to send
+      - when: app.status.operationState != nil and app.status.operationState.phase in ['Succeeded']
+        oncePer: app.status.operationState.syncResult.revision
+        send: [app-sync-succeeded]
+    trigger.on-health-degraded: |
+      - when: app.status.health.status == 'Degraded'
+        send: [app-health-degraded]
