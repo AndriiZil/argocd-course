@@ -11,10 +11,10 @@ configs:
       p, role:tinyshop-dev, applications, sync, tinyshop/*, allow
       # (2) logs are a separate resource, and since 3.0 always checked
       p, role:tinyshop-dev, logs, get, tinyshop/*, allow
-      # (3) update changes the Application only; update/* would reach its resources
+      # (3) update changes the Application only, not the resources it manages
       p, role:tinyshop-dev, applications, update, tinyshop/*, allow
-      # (4) an action with a sub-resource: delete Pods of the app, nothing else
-      p, role:tinyshop-dev, applications, delete/*/Pod/*/*, tinyshop/*, allow
+      # (4) update/<group>/<kind>/<ns>/<name> reaches resources: Deployments only
+      p, role:tinyshop-dev, applications, update/apps/Deployment/*/*, tinyshop/*, allow
       # (5) deny wins over allow
       p, role:tinyshop-dev, applications, sync, tinyshop/shop-prod, deny
       # (6) the CI account may read and sync, nothing more
