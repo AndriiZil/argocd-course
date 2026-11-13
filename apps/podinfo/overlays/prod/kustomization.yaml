@@ -2,11 +2,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ../../base
+- ../../base
 namespace: tinyshop-prod
 replicas:
-  - name: podinfo
-    count: 3
+- count: 3
+  name: podinfo
 images:
-  - name: ghcr.io/stefanprodan/podinfo
-    newTag: 6.15.0
+- name: ghcr.io/stefanprodan/podinfo
+  newTag: 6.15.0
