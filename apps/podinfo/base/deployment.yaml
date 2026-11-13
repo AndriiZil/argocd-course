@@ -5,7 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/name: podinfo
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app.kubernetes.io/name: podinfo
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: podinfo
-          image: ghcr.io/stefanprodan/podinfo:6.17.0
+          image: ghcr.io/stefanprodan/podinfo:6.15.0
           ports:
             - name: http
               containerPort: 9898
