@@ -1,0 +1,7 @@
+apiVersion: tinyshop.example/v1
+kind: Widget
+metadata:
+  name: zz-crd
+spec:
+  ports:
+    - port: 9898
