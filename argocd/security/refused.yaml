@@ -1,0 +1,45 @@
+# Three Applications that break the tinyshop fence, one rule each.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: refused-repo
+  namespace: argocd
+spec:
+  project: tinyshop
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git   # not in sourceRepos
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tinyshop-dev
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: refused-destination
+  namespace: argocd
+spec:
+  project: tinyshop
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/podinfo/overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system       # not matching tinyshop-*
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: refused-kind
+  namespace: argocd
+spec:
+  project: tinyshop
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/security/cluster-role   # holds a ClusterRole
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tinyshop-dev

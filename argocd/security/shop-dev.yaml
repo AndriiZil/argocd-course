@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shop-dev
+  namespace: argocd
+spec:
+  project: tinyshop              # the fence for this Application
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/podinfo/overlays/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tinyshop-dev
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

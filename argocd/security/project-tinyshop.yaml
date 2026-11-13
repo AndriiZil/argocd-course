@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: tinyshop                 # (1) the name an Application puts in spec.project
+  namespace: argocd              #     always the Argo CD namespace
+spec:
+  description: The TinyShop team's fence
+  sourceRepos:                   # (2) which Git repositories may be deployed
+    - https://github.com/AndriiZil/argocd-course.git
+  destinations:                  # (3) which clusters and namespaces may be deployed to
+    - server: https://kubernetes.default.svc
+      namespace: tinyshop-*      #     a glob: tinyshop-dev, tinyshop-prod, ...
+  clusterResourceWhitelist:      # (4) which cluster-wide kinds may be created
+    - group: ""
+      kind: Namespace            #     only Namespaces, for CreateNamespace=true
