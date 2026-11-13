@@ -13,4 +13,4 @@ spec:
       containers:
         - name: migrate
           image: ghcr.io/stefanprodan/podinfo:6.17.0
-          command: ["sh", "-c", "echo migrating the database; sleep 5; exit 1"]
+          command: ["sh", "-c", "echo migrating the database; sleep 5; echo done"]
