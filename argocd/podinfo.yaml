@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: podinfo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/podinfo/base
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: podinfo
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

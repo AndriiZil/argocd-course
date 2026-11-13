@@ -1,0 +1,5 @@
+# Argo CD on a laptop: the chart defaults, plus two small changes.
+global:
+  domain: localhost:8080   # where we open the UI; the CLI prints links to it
+dex:
+  enabled: false           # no SSO on a laptop (Lesson 9 explains SSO)

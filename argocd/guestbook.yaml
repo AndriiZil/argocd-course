@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd          # Applications live in the argocd namespace
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD     # the default branch
+    path: guestbook          # the folder with the manifests
+  destination:
+    server: https://kubernetes.default.svc   # "this cluster"
+    namespace: guestbook
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

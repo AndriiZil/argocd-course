@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: podinfo                  # (1) the name in the UI and the CLI
+  namespace: argocd              # (2) always the namespace Argo CD runs in
+spec:
+  project: default               # (3) the AppProject whose rules apply (Lesson 9)
+  source:                        # (4) WHERE FROM
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main         #     a branch, a tag or a commit
+    path: apps/podinfo/base      #     a folder inside the repository
+  destination:                   # (5) WHERE TO
+    server: https://kubernetes.default.svc
+    namespace: podinfo
+  syncPolicy:                    # (6) WHEN AND HOW TO SYNC
+    automated:                   #     without this block, you press Sync yourself
+      prune: true                #     delete what was removed from Git
+      selfHeal: true             #     undo changes made by hand in the cluster
+    syncOptions:
+      - CreateNamespace=true
