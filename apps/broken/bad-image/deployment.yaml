@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bad-image
+spec:
+  replicas: 1
+  progressDeadlineSeconds: 30    # default is 600; we do not want to wait 10 minutes
+  selector:
+    matchLabels:
+      app: bad-image
+  template:
+    metadata:
+      labels:
+        app: bad-image
+    spec:
+      containers:
+        - name: podinfo
+          image: ghcr.io/stefanprodan/podinfo:6.99.0   # this tag does not exist
+          ports:
+            - containerPort: 9898

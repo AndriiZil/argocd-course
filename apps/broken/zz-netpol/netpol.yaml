@@ -1,0 +1,11 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: zz-netpol
+spec:
+  podSelector:
+    matchLabels:
+      app: zz
+  ingress:
+    - ports:
+        - port: 9898

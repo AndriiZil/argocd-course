@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zz-quantity
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: zz-quantity
+  template:
+    metadata:
+      labels:
+        app: zz-quantity
+    spec:
+      containers:
+        - name: podinfo
+          image: ghcr.io/stefanprodan/podinfo:6.17.0
+          resources:
+            requests: { cpu: 1000m, memory: 0.5Gi }
+            limits: { cpu: 1000m, memory: 0.5Gi }

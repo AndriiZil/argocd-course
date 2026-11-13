@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stuck-delete
+  finalizers:
+    - tinyshop.example/hold      # nobody removes this one
+data:
+  note: "I cannot be deleted until my finalizer is gone."

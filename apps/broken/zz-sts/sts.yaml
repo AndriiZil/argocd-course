@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zz-sts
+spec:
+  serviceName: zz-sts
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zz-sts
+  template:
+    metadata:
+      labels:
+        app: zz-sts
+    spec:
+      containers:
+        - name: podinfo
+          image: ghcr.io/stefanprodan/podinfo:6.17.0
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests:
+            storage: 16Mi
