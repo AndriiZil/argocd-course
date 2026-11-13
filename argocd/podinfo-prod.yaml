@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: podinfo-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/podinfo/overlays/prod     # the other overlay: the only difference
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tinyshop-prod
+  syncPolicy:                            # no `automated`: a person presses Sync
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,5 @@
+# Helm values for prod: three replicas.
+replicaCount: 3
+ui:
+  color: "#2f6fe0"
+  message: "Hello from TinyShop (Helm, prod)"

@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: podinfo-helm-prod
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: oci://ghcr.io/stefanprodan/charts/podinfo
+      targetRevision: 6.15.0                   # prod lags dev, as in the overlays
+      path: .
+      helm:
+        valueFiles:
+          - $values/apps/podinfo-helm/values-prod.yaml
+    - repoURL: https://github.com/AndriiZil/argocd-course.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tinyshop-helm-prod
+  syncPolicy:                                  # manual sync, like podinfo-prod
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,5 @@
+# Helm values for dev. The chart version is pinned in the Application, not here.
+replicaCount: 1
+ui:
+  color: "#2f6fe0"
+  message: "Hello from TinyShop (Helm, dev)"

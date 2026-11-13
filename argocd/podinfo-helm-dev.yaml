@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: podinfo-helm-dev
+  namespace: argocd
+spec:
+  project: default
+  sources:                                     # a list: more than one source
+    - repoURL: oci://ghcr.io/stefanprodan/charts/podinfo   # the chart, from a registry
+      targetRevision: 6.17.0                   # the chart version, pinned
+      path: .                                  # always "." for an OCI chart
+      helm:
+        valueFiles:
+          - $values/apps/podinfo-helm/values-dev.yaml      # a file in the second source
+    - repoURL: https://github.com/AndriiZil/argocd-course.git
+      targetRevision: main
+      ref: values                              # the name that `$values` points to
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tinyshop-helm-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
