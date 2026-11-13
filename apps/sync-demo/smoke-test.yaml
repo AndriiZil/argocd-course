@@ -3,8 +3,8 @@ kind: Job
 metadata:
   name: smoke-test
   annotations:
-    argocd.argoproj.io/hook: PostSync                        # after everything is healthy
-    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    argocd.argoproj.io/hook: PostSync                    # after everything is Healthy
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
 spec:
   backoffLimit: 0
   template:
