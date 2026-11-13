@@ -16,4 +16,4 @@ spec:
     automated: {}
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true     # the Rollouts CRDs are too big for a plain apply
+      - ServerSideApply=true     # the Rollouts CRD files are large (180 to 240 KB each)
