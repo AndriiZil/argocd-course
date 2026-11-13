@@ -1,0 +1,38 @@
+# Two identical Applications. Only `demo-clean` has the finalizer. Used in Lesson 6.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-keep
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/podinfo/base
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo-keep
+  syncPolicy:
+    automated: {}
+    syncOptions: [CreateNamespace=true]
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-clean
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io   # the only difference
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: apps/podinfo/base
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo-clean
+  syncPolicy:
+    automated: {}
+    syncOptions: [CreateNamespace=true]

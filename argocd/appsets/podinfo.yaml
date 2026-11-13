@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: podinfo                  # (1) the name of the ApplicationSet
+  namespace: argocd
+spec:
+  goTemplate: true               # (2) write {{ .name }}, with a leading dot
+  goTemplateOptions: ["missingkey=error"]   # (3) a typo in a name is an error
+  generators:                    # (4) where the parameters come from
+    - git:
+        repoURL: https://github.com/AndriiZil/argocd-course.git
+        revision: main
+        directories:
+          - path: apps/podinfo/overlays/*   # (5) one parameter set per folder
+  template:                      # (6) an Application with holes in it
+    metadata:
+      name: 'podinfo-{{ .path.basename }}'   # (7) the holes: dev, prod ...
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/AndriiZil/argocd-course.git
+        targetRevision: main
+        path: '{{ .path.path }}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'tinyshop-{{ .path.basename }}'
+      syncPolicy:                # (8) every generated Application syncs by itself
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

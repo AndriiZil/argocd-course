@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root                     # (1) the one Application you apply by hand
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io   # (2) deleting root deletes its children
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AndriiZil/argocd-course.git
+    targetRevision: main
+    path: argocd/apps            # (3) a folder of Application files
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd            # (4) the children are Applications: they live here
+  syncPolicy:
+    automated:
+      prune: true                # (5) a file removed from Git removes its Application
+      selfHeal: true
