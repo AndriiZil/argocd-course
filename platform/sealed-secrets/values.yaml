@@ -1,0 +1,2 @@
+# Sealed Secrets controller: the chart defaults plus one name.
+fullnameOverride: sealed-secrets-controller   # the name that kubeseal looks for by default

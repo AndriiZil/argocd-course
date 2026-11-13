@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+spec:
+  replicas: 5
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rollouts-demo
+  strategy:
+    canary:                      # (1) instead of a Deployment's rolling update
+      steps:
+        - setWeight: 20          # (2) 20% of the pods run the new version
+        - pause: {}              # (3) wait until a person promotes
+        - setWeight: 50
+        - pause: { duration: 15s }
+        # after the last step the new version takes 100%
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rollouts-demo
+    spec:
+      containers:
+        - name: podinfo
+          image: ghcr.io/stefanprodan/podinfo   # the tag comes from kustomization.yaml
+          ports:
+            - name: http
+              containerPort: 9898
+          readinessProbe:
+            httpGet: { path: /readyz, port: http }
+          resources:
+            requests: { cpu: 10m, memory: 24Mi }
+            limits: { memory: 48Mi }

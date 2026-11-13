@@ -1,0 +1,16 @@
+# podinfo again, but its UI message now comes from a Secret that is sealed in Git.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../podinfo/base
+  - sealedsecret.yaml
+namespace: secrets-demo
+patches:
+  - target: { kind: Deployment, name: podinfo }
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/env/1
+        value:
+          name: PODINFO_UI_MESSAGE
+          valueFrom:
+            secretKeyRef: { name: podinfo-secret, key: message }

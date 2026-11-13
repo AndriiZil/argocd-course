@@ -1,0 +1,35 @@
+name: release
+on:
+  push:
+    branches: [main]
+    paths: ["storefront/**"]   # no such folder here, so this never runs in this repo
+permissions:
+  contents: write              # to commit the tag bump
+  packages: write              # to push the image
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build and push the image
+        env:
+          REGISTRY_TOKEN: ${{ github.token }}
+        run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/storefront:${GITHUB_SHA}"
+          echo "$REGISTRY_TOKEN" \
+            | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker build -t "$IMAGE" storefront
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+      - name: Bump the dev tag in Git
+        run: |
+          URL=https://github.com/kubernetes-sigs/kustomize/releases/download
+          curl -sL "$URL/kustomize%2Fv5.8.3/kustomize_v5.8.3_linux_amd64.tar.gz" \
+            | tar -xz -C "$RUNNER_TEMP"
+          cd apps/podinfo/overlays/dev
+          "$RUNNER_TEMP/kustomize" edit set image "ghcr.io/stefanprodan/podinfo=$IMAGE"
+          git config user.name release-bot
+          git config user.email release-bot@users.noreply.github.com
+          git commit -am "Deploy ${GITHUB_SHA::7} to dev"
+          git pull --rebase origin main
+          git push origin main
